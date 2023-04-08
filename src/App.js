@@ -1,10 +1,11 @@
 import './App.css';
 import 'antd/dist/reset.css';
-import { Table, Button, Input, Modal } from 'antd'
+import { Table, Button, Input, Modal, Select, Tag } from 'antd'
 import { useState, useEffect } from 'react';
 import CreateModal from './components/CreateModal';
 import EditModal from './components/EditModal';
 import { EditOutlined, DeleteOutlined, } from '@ant-design/icons'
+
 
 function App() {
   const [openCreate, setOpenCreate] = useState(false)
@@ -13,13 +14,13 @@ function App() {
   const [todoList, setTodoList] = useState(() => {
     return JSON.parse(localStorage.getItem("todoList")) || []
   })
-  console.log("todolist", todoList)
+  // console.log("todolist", todoList)
   const [data, setData] = useState({
     title: "",
     description: "",
     created: "",
     dueDate: "",
-    tag: "",
+    tag: [],
     status: ""
   })
 
@@ -55,8 +56,6 @@ function App() {
       dataIndex: "title",
       filteredValue: [search],
       onFilter: (value, record) => {
-        console.log("value", value)
-        console.log("record", record)
         return String(record.title).toLowerCase().includes(value.toLowerCase()) ||
           String(record.id).toLowerCase().includes(value.toLowerCase()) ||
           String(record.description).toLowerCase().includes(value.toLowerCase()) ||
@@ -79,38 +78,43 @@ function App() {
     {
       title: "Created",
       dataIndex: "created",
-      // sorter: (record1, record2) => {
-      //   return record1.created.length - record2.created.length
-      // },
-      sorter: (a, b) => new Date(a.date) - new Date(b.date)
+      sorter: (a, b) => new Date(a.created) - new Date(b.created)
     },
     {
       title: "Due date",
       dataIndex: "dueDate",
-      // sorter: (record1, record2) => {
-      //   return record1.dueDate.length - record2.dueDate.length
-      // },
-      sorter: (a, b) => new Date(a.date) - new Date(b.date)
+      sorter: (a, b) => {
+        return new Date(a.dueDate) - new Date(b.dueDate)
+      }
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
       filters: [
-        { text: 'OPEN', value: 'OPEN' },
-        { text: 'WORKING', value: 'WORKING' },
+        { text: 'OPEN', value: "OPEN" },
+        { text: 'WORKING', value: "WORKING" },
         { text: 'DONE', value: 'DONE' },
         { text: 'OVERDUE', value: 'OVERDUE' },
       ],
       onFilter: (value, record) => {
-        console.log("value", value)
-        console.log("record", record)
-        return record.status === value
+        return record.status.includes(value)
       }
     },
     {
       title: "Tag",
-      dataIndex: "tag"
+      dataIndex: "tag",
+      render: (record) => {
+        // console.log("tagrecord", record)
+        return (
+          Array.isArray(record) && record?.map(tag => {
+            return (
+              <Tag color="success">{tag}</Tag>
+              // <span style={{ border: "2px solid red" }}> {tag} </span>
+            )
+          })
+        )
+      }
     },
     {
       title: "Actions",
@@ -131,7 +135,7 @@ function App() {
       description: "",
       created: "",
       dueDate: "",
-      tag: "",
+      tag: [],
       status: ""
     })
   }
@@ -148,13 +152,26 @@ function App() {
   }
 
   const onSubmitCreate = (data) => {
+    const timeStamp = generateTimeStamp();
+    const d1 = new Date(data.dueDate).getTime()
+    const d2 = new Date(timeStamp);
+    const d3 = d2.getTime();
     // console.log("submit data =", data)
-    const randomId = parseInt(Math.random() * 100)
+    if (data?.title === "" || data?.description === "" || data?.status === "" || d1 < d3) {
+      window.alert("please fill all the details")
+      return;
+    }
+    // if (d1 < d3) {
+    //   console.log("false")
+    // } else {
+    //   console.log("true")
+    // }
+    const randomId = parseInt(Math.random() * 1000)
     setTodoList([
       ...todoList,
       {
         ...data,
-        created: generateTimeStamp(),
+        created: timeStamp,
         id: randomId
       }
     ])
@@ -212,8 +229,15 @@ function App() {
       status: value
     })
   }
+  const handleTagChange = (value) => {
+    // console.log("tags", value)
+    setData({
+      ...data,
+      tag: value
+    })
+  }
 
-  console.log("data =", data)
+  // console.log("data =", data)
 
   return (
     <div className="App">
@@ -227,10 +251,12 @@ function App() {
             Add Todo Items
           </Button>
         </div>
-        <Table columns={coloumns} dataSource={todoList} className="modalStyle" key={todoList?.id}>
+        <Table columns={coloumns} dataSource={todoList} className="modalStyle" key={todoList?.id} pagination={{
+          pageSize: 5
+        }}>
         </Table>
-        <CreateModal onChange={change} data={data} openCreate={openCreate} setOpenCreate={setOpenCreate} submit={(data) => onSubmitCreate(data)} changeStatus={statusHandler} />
-        <EditModal onChange={change} data={data} openEdit={openEdit} setOpenEdit={setOpenEdit} submit={(data) => onSubmitEdit(data)} changeStatus={statusHandler} />
+        <CreateModal onChange={change} data={data} openCreate={openCreate} setOpenCreate={setOpenCreate} submit={(data) => onSubmitCreate(data)} changeStatus={statusHandler} changeTag={handleTagChange} />
+        <EditModal onChange={change} data={data} openEdit={openEdit} setOpenEdit={setOpenEdit} submit={(data) => onSubmitEdit(data)} changeStatus={statusHandler} changeTag={handleTagChange} />
       </header>
 
     </div>

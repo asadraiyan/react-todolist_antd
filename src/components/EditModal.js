@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal, Input, Select } from "antd"
 
-const CreateModal = ({ data, onChange, openEdit, setOpenEdit, submit, changeStatus }) => {
+const CreateModal = ({ data, onChange, openEdit, setOpenEdit, submit, changeStatus, changeTag }) => {
 
     return (
         <>
@@ -35,6 +35,7 @@ const CreateModal = ({ data, onChange, openEdit, setOpenEdit, submit, changeStat
                         maxLength={1000}
                         addonBefore="Description"
                         showCount={true}
+                        required={true}
                     />
 
                     <Input
@@ -55,16 +56,25 @@ const CreateModal = ({ data, onChange, openEdit, setOpenEdit, submit, changeStat
                         type='date'
                         onChange={onChange}
                         addonBefore="Due Date"
+                        required={true}
                     />
 
-                    <Input
+                    {/* <Input
                         value={data?.tag}
                         name='tag'
                         size='large'
                         placeholder='Tag'
                         onChange={onChange}
                         addonBefore="Tag"
+                    /> */}
 
+                    <Select
+                        mode="tags"
+                        style={{ width: '100%' }}
+                        placeholder="Tags Mode"
+                        onChange={changeTag}
+                        value={data.tag}
+                    // options={data.tag}
                     />
 
                     <Select
