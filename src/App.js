@@ -1,6 +1,6 @@
 import './App.css';
 import 'antd/dist/reset.css';
-import { Table, Button, Input } from 'antd'
+import { Table, Button, Input, Modal } from 'antd'
 import { useState, useEffect } from 'react';
 import CreateModal from './components/CreateModal';
 import EditModal from './components/EditModal';
@@ -10,10 +10,10 @@ function App() {
   const [openCreate, setOpenCreate] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
   const [search, setSearch] = useState("")
-  // console.log("todo =", todo)
   const [todoList, setTodoList] = useState(() => {
     return JSON.parse(localStorage.getItem("todoList")) || []
   })
+  console.log("todolist", todoList)
   const [data, setData] = useState({
     title: "",
     description: "",
@@ -45,13 +45,18 @@ function App() {
   const coloumns = [
     {
       title: "ID",
-      dataIndex: "id"
+      dataIndex: "id",
+      sorter: (record1, record2) => {
+        return record1.id - record2.id
+      }
     },
     {
       title: "Title",
       dataIndex: "title",
       filteredValue: [search],
       onFilter: (value, record) => {
+        console.log("value", value)
+        console.log("record", record)
         return String(record.title).toLowerCase().includes(value.toLowerCase()) ||
           String(record.id).toLowerCase().includes(value.toLowerCase()) ||
           String(record.description).toLowerCase().includes(value.toLowerCase()) ||
@@ -59,23 +64,49 @@ function App() {
           String(record.dueDate).toLowerCase().includes(value.toLowerCase()) ||
           String(record.status).toLowerCase().includes(value.toLowerCase()) ||
           String(record.tag).toLowerCase().includes(value.toLowerCase())
-      }
+      },
+      sorter: (record1, record2) => {
+        return record1.title.length - record2.title.length
+      },
     },
     {
       title: "Description",
-      dataIndex: "description"
+      dataIndex: "description",
+      sorter: (record1, record2) => {
+        return record1.description.length - record2.description.length
+      },
     },
     {
       title: "Created",
-      dataIndex: "created"
+      dataIndex: "created",
+      // sorter: (record1, record2) => {
+      //   return record1.created.length - record2.created.length
+      // },
+      sorter: (a, b) => new Date(a.date) - new Date(b.date)
     },
     {
       title: "Due date",
-      dataIndex: "dueDate"
+      dataIndex: "dueDate",
+      // sorter: (record1, record2) => {
+      //   return record1.dueDate.length - record2.dueDate.length
+      // },
+      sorter: (a, b) => new Date(a.date) - new Date(b.date)
     },
     {
       title: "Status",
-      dataIndex: "status"
+      dataIndex: "status",
+      key: "status",
+      filters: [
+        { text: 'OPEN', value: 'OPEN' },
+        { text: 'WORKING', value: 'WORKING' },
+        { text: 'DONE', value: 'DONE' },
+        { text: 'OVERDUE', value: 'OVERDUE' },
+      ],
+      onFilter: (value, record) => {
+        console.log("value", value)
+        console.log("record", record)
+        return record.status === value
+      }
     },
     {
       title: "Tag",
@@ -105,12 +136,27 @@ function App() {
     })
   }
 
+  const generateTimeStamp = () => {
+    const currentDate = new Date();
+    const currentDayOfMonth = currentDate.getDate();
+    const formattedDate = currentDayOfMonth < 10 ? "0" + currentDayOfMonth : currentDayOfMonth;
+    const currentMonth = currentDate.getMonth() + 1;
+    const formattedMonth = currentMonth < 10 ? "0" + currentMonth : currentMonth;
+    const currentYear = currentDate.getFullYear();
+    const dateString = currentYear + "-" + formattedMonth + "-" + formattedDate;
+    return dateString
+  }
+
   const onSubmitCreate = (data) => {
     // console.log("submit data =", data)
     const randomId = parseInt(Math.random() * 100)
     setTodoList([
       ...todoList,
-      { ...data, id: randomId }
+      {
+        ...data,
+        created: generateTimeStamp(),
+        id: randomId
+      }
     ])
     setOpenCreate(false)
     resetData()
@@ -127,10 +173,10 @@ function App() {
       })
     })
     setOpenEdit(false)
-    console.log("data", data)
+    // console.log("data", data)
   }
   const onEditItem = (record) => {
-    console.log("record =", record)
+    // console.log("record =", record)
     setData({
       id: record.id,
       title: record.title,
@@ -142,17 +188,32 @@ function App() {
     })
     setOpenEdit(true)
   }
-  console.log("todoList =", todoList)
+  // console.log("todoList =", todoList)
 
   const onDeleteItem = (record) => {
     // console.log("record = ", record)
-    setTodoList((todoList) => {
-      return todoList.filter((data) => {
-        return data.id !== record.id;
-      })
+    Modal.confirm({
+      title: "Are you sure, you want to delete this item ?",
+      okText: "Yes",
+      okType: "danger",
+      onOk: () => {
+        setTodoList((todoList) => {
+          return todoList.filter((data) => {
+            return data.id !== record.id;
+          })
+        })
+      }
     })
-
   }
+
+  const statusHandler = (value) => {
+    setData({
+      ...data,
+      status: value
+    })
+  }
+
+  console.log("data =", data)
 
   return (
     <div className="App">
@@ -168,8 +229,8 @@ function App() {
         </div>
         <Table columns={coloumns} dataSource={todoList} className="modalStyle" key={todoList?.id}>
         </Table>
-        <CreateModal onChange={change} data={data} openCreate={openCreate} setOpenCreate={setOpenCreate} submit={(data) => onSubmitCreate(data)} />
-        <EditModal onChange={change} data={data} openEdit={openEdit} setOpenEdit={setOpenEdit} submit={(data) => onSubmitEdit(data)} />
+        <CreateModal onChange={change} data={data} openCreate={openCreate} setOpenCreate={setOpenCreate} submit={(data) => onSubmitCreate(data)} changeStatus={statusHandler} />
+        <EditModal onChange={change} data={data} openEdit={openEdit} setOpenEdit={setOpenEdit} submit={(data) => onSubmitEdit(data)} changeStatus={statusHandler} />
       </header>
 
     </div>
