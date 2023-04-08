@@ -21,7 +21,7 @@ function App() {
     created: "",
     dueDate: "",
     tag: [],
-    status: ""
+    status: "OPEN"
   })
 
   useEffect(() => {
@@ -78,6 +78,7 @@ function App() {
     {
       title: "Created",
       dataIndex: "created",
+      defaultSortOrder: "descend",
       sorter: (a, b) => new Date(a.created) - new Date(b.created)
     },
     {
@@ -102,7 +103,7 @@ function App() {
       }
     },
     {
-      title: "Tag",
+      title: "Tags",
       dataIndex: "tag",
       render: (record) => {
         // console.log("tagrecord", record)
@@ -136,7 +137,7 @@ function App() {
       created: "",
       dueDate: "",
       tag: [],
-      status: ""
+      status: "OPEN"
     })
   }
 
@@ -153,12 +154,17 @@ function App() {
 
   const onSubmitCreate = (data) => {
     const timeStamp = generateTimeStamp();
-    const d1 = new Date(data.dueDate).getTime()
-    const d2 = new Date(timeStamp);
-    const d3 = d2.getTime();
+    const finalDueDate = new Date(data.dueDate).getTime()
+    const createdDate = new Date(timeStamp);
+    const finalCreatedDate = createdDate.getTime();
     // console.log("submit data =", data)
-    if (data?.title === "" || data?.description === "" || data?.status === "" || d1 < d3) {
+    if (data.title === "" || data.description === "" || data.status === "") {
       window.alert("please fill all the details")
+      return;
+    }
+
+    if (finalDueDate < finalCreatedDate) {
+      window.alert("Invalid due date")
       return;
     }
     // if (d1 < d3) {
@@ -180,6 +186,17 @@ function App() {
   }
 
   const onSubmitEdit = (data) => {
+    const finalDueDate = new Date(data.dueDate).getTime()
+    const finalCreatedDate = new Date(data.created).getTime();
+    if (data.title === "" || data.description === "" || data.status === "") {
+      window.alert("please fill all the details")
+      return;
+    }
+
+    if (finalDueDate < finalCreatedDate) {
+      window.alert("Invalid due date")
+      return;
+    }
     setTodoList(prevTodoList => {
       return prevTodoList.map(todo => {
         if (todo.id === data.id) {
@@ -248,7 +265,7 @@ function App() {
             setSearch(value)
           }} className='search-input' type='search' onChange={(e) => setSearch(e.target.value)} ></Input.Search>
           <Button type='primary' onClick={() => setOpenCreate(!openCreate)}>
-            Add Todo Items
+            Add Todo
           </Button>
         </div>
         <Table columns={coloumns} dataSource={todoList} className="modalStyle" key={todoList?.id} pagination={{

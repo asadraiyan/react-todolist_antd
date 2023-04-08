@@ -22,14 +22,17 @@ const CreateModal = ({ data, onChange, openCreate, setOpenCreate, submit, change
                     <Select
                         mode="tags"
                         style={{ width: '100%' }}
-                        placeholder="Tags Mode"
+                        placeholder="Tags"
                         onChange={changeTag}
-                        // options={[{}]}
+                        // options={[]}
                         value={data.tag}
+                        size='large'
                     />
                     <Select
                         defaultValue="OPEN"
                         onChange={changeStatus}
+                        size='large'
+                        value={data.status}
                         options={[
                             {
                                 label: 'Status',

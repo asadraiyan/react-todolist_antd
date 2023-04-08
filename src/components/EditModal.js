@@ -74,12 +74,15 @@ const CreateModal = ({ data, onChange, openEdit, setOpenEdit, submit, changeStat
                         placeholder="Tags Mode"
                         onChange={changeTag}
                         value={data.tag}
+                        size='large'
                     // options={data.tag}
                     />
 
                     <Select
                         defaultValue="OPEN"
                         onChange={changeStatus}
+                        value={data?.status}
+                        size='large'
                         options={[
                             {
                                 label: 'Status',
