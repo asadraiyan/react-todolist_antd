@@ -18,13 +18,11 @@ const CreateModal = ({ data, onChange, openCreate, setOpenCreate, submit, change
                     <Input value={data.title} name='title' onChange={onChange} size='large' placeholder='Title' maxLength={100} addonBefore="Title" showCount={true} />
                     <Input value={data.description} name='description' onChange={onChange} size='large' placeholder='Description' maxLength={1000} addonBefore="Description" showCount={true} />
                     <Input value={data.dueDate} name='dueDate' onChange={onChange} size='large' placeholder='Due date' type='date' addonBefore="Due Date" />
-                    {/* <Input value={data.tag} name='tag' onChange={onChange} size='large' placeholder='Tag' addonBefore="Tag" /> */}
                     <Select
                         mode="tags"
                         style={{ width: '100%' }}
                         placeholder="Tags"
                         onChange={changeTag}
-                        // options={[]}
                         value={data.tag}
                         size='large'
                     />

@@ -58,16 +58,6 @@ const CreateModal = ({ data, onChange, openEdit, setOpenEdit, submit, changeStat
                         addonBefore="Due Date"
                         required={true}
                     />
-
-                    {/* <Input
-                        value={data?.tag}
-                        name='tag'
-                        size='large'
-                        placeholder='Tag'
-                        onChange={onChange}
-                        addonBefore="Tag"
-                    /> */}
-
                     <Select
                         mode="tags"
                         style={{ width: '100%' }}
@@ -75,9 +65,7 @@ const CreateModal = ({ data, onChange, openEdit, setOpenEdit, submit, changeStat
                         onChange={changeTag}
                         value={data.tag}
                         size='large'
-                    // options={data.tag}
                     />
-
                     <Select
                         defaultValue="OPEN"
                         onChange={changeStatus}

@@ -6,7 +6,6 @@ import CreateModal from './components/CreateModal';
 import EditModal from './components/EditModal';
 import { EditOutlined, DeleteOutlined, } from '@ant-design/icons'
 
-
 function App() {
   const [openCreate, setOpenCreate] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
@@ -111,7 +110,6 @@ function App() {
           Array.isArray(record) && record?.map(tag => {
             return (
               <Tag color="success">{tag}</Tag>
-              // <span style={{ border: "2px solid red" }}> {tag} </span>
             )
           })
         )
@@ -167,11 +165,7 @@ function App() {
       window.alert("Invalid due date")
       return;
     }
-    // if (d1 < d3) {
-    //   console.log("false")
-    // } else {
-    //   console.log("true")
-    // }
+
     const randomId = parseInt(Math.random() * 1000)
     setTodoList([
       ...todoList,
