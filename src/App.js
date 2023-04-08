@@ -1,6 +1,6 @@
 import './App.css';
 import 'antd/dist/reset.css';
-import { Table, Button, Input, Modal, Select, Tag } from 'antd'
+import { Table, Button, Input, Modal, Tag } from 'antd'
 import { useState, useEffect } from 'react';
 import CreateModal from './components/CreateModal';
 import EditModal from './components/EditModal';
