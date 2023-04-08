@@ -71,7 +71,7 @@ const CreateModal = ({ data, onChange, openEdit, setOpenEdit, submit, changeStat
                     <Select
                         mode="tags"
                         style={{ width: '100%' }}
-                        placeholder="Tags Mode"
+                        placeholder="Tags"
                         onChange={changeTag}
                         value={data.tag}
                         size='large'
