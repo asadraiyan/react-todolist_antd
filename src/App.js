@@ -12,11 +12,9 @@ function App() {
   const [openCreate, setOpenCreate] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
   const [search, setSearch] = useState("")
-  const [todoList, setTodoList] = useState(() => {
-    return JSON.parse(localStorage.getItem("todoList")) || []
-  })
+  const [todoList, setTodoList] = useState(JSON.parse(localStorage.getItem("todoList")) || []) // state for todo list and getting from local stoarage if present
   // console.log("todolist", todoList)
-  const [data, setData] = useState({
+  const [data, setData] = useState({  // state for form data
     title: "",
     description: "",
     created: "",
@@ -27,7 +25,7 @@ function App() {
 
   useEffect(() => {
     const saveLocalTodos = () => {
-      localStorage.setItem("todoList", JSON.stringify(todoList));
+      localStorage.setItem("todoList", JSON.stringify(todoList));  // saving the lodo list in local storage
     }
     saveLocalTodos();
   }, [todoList])
@@ -36,7 +34,7 @@ function App() {
     resetData()
   }, [openCreate])
 
-  const change = (e) => {
+  const change = (e) => {   // form change handler to update value of each fields
     const name = e.target.name;
     const value = e.target.value;
     setData({
@@ -107,7 +105,7 @@ function App() {
       title: "Tags",
       dataIndex: "tag",
       render: (record) => {
-        // console.log("tagrecord", record)
+        console.log("tagrecord", record)
         return (
           Array.isArray(record) && record?.map(tag => {
             return (
@@ -130,7 +128,7 @@ function App() {
     }
   ]
 
-  const resetData = () => {
+  const resetData = () => { // to reset the form data 
     setData({
       title: "",
       description: "",
@@ -141,7 +139,7 @@ function App() {
     })
   }
 
-  const generateTimeStamp = () => {
+  const generateTimeStamp = () => { // created timestamp
     const currentDate = new Date();
     const currentDayOfMonth = currentDate.getDate();
     const formattedDate = currentDayOfMonth < 10 ? "0" + currentDayOfMonth : currentDayOfMonth;
@@ -152,12 +150,11 @@ function App() {
     return dateString
   }
 
-  const onSubmitCreate = (data) => {
-    const timeStamp = generateTimeStamp();
+  const onSubmitCreate = () => { // to submit the form data
+    const timeStamp = generateTimeStamp(); // eg. 2023-04-08
     const finalDueDate = new Date(data.dueDate).getTime()
     const createdDate = new Date(timeStamp);
     const finalCreatedDate = createdDate.getTime();
-    // console.log("submit data =", data)
     if (data.title === "" || data.description === "" || data.status === "") {
       toast.warning("Please fill all the input details", {
         position: "top-center"
@@ -165,14 +162,14 @@ function App() {
       return;
     }
 
-    if (finalDueDate < finalCreatedDate) {
+    if (finalDueDate < finalCreatedDate) { // to check the condition that due date is less than created date
       toast.error("Invalid due date", {
         position: "top-center"
       })
       return;
     }
 
-    const randomId = parseInt(Math.random() * 1000)
+    const randomId = parseInt(Math.random() * 1000) // to generate the random Id
     setTodoList([
       ...todoList,
       {
@@ -188,7 +185,7 @@ function App() {
     resetData()
   }
 
-  const onSubmitEdit = (data) => {
+  const onSubmitEdit = () => { // to submit the edited form data
     const finalDueDate = new Date(data.dueDate).getTime()
     const finalCreatedDate = new Date(data.created).getTime();
     if (data.title === "" || data.description === "" || data.status === "") {
@@ -232,7 +229,7 @@ function App() {
   }
   // console.log("todoList =", todoList)
 
-  const onDeleteItem = (record) => {
+  const onDeleteItem = (record) => {  // to delete the todo item
     // console.log("record = ", record)
     Modal.confirm({
       title: "Are you sure, you want to delete this item ?",
@@ -248,13 +245,13 @@ function App() {
     })
   }
 
-  const statusHandler = (value) => {
+  const statusHandler = (value) => { // to handle the onChange of status
     setData({
       ...data,
       status: value
     })
   }
-  const handleTagChange = (value) => {
+  const handleTagChange = (value) => { // to handle the onChange of tag
     // console.log("tags", value)
     setData({
       ...data,
@@ -280,8 +277,8 @@ function App() {
           pageSize: 5
         }}>
         </Table>
-        <CreateModal onChange={change} data={data} openCreate={openCreate} setOpenCreate={setOpenCreate} submit={(data) => onSubmitCreate(data)} changeStatus={statusHandler} changeTag={handleTagChange} />
-        <EditModal onChange={change} data={data} openEdit={openEdit} setOpenEdit={setOpenEdit} submit={(data) => onSubmitEdit(data)} changeStatus={statusHandler} changeTag={handleTagChange} />
+        <CreateModal onChange={change} data={data} openCreate={openCreate} setOpenCreate={setOpenCreate} submit={onSubmitCreate} changeStatus={statusHandler} changeTag={handleTagChange} />
+        <EditModal onChange={change} data={data} openEdit={openEdit} setOpenEdit={setOpenEdit} submit={onSubmitEdit} changeStatus={statusHandler} changeTag={handleTagChange} />
       </header>
       <ToastContainer />
 

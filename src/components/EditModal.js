@@ -10,7 +10,7 @@ const CreateModal = ({ data, onChange, openEdit, setOpenEdit, submit, changeStat
                 okText="Save"
                 open={openEdit}
                 onCancel={() => setOpenEdit(false)}
-                onOk={() => submit(data)}
+                onOk={submit}
                 style={{ gap: "1rem" }}
                 className="modalStyle"
             >

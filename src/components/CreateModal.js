@@ -10,7 +10,7 @@ const CreateModal = ({ data, onChange, openCreate, setOpenCreate, submit, change
                 okText="Submit"
                 open={openCreate}
                 onCancel={() => setOpenCreate(false)}
-                onOk={() => submit(data)}
+                onOk={submit}
                 style={{ gap: "1rem" }}
                 className="modalStyle"
             >
