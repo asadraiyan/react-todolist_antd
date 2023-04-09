@@ -5,6 +5,8 @@ import { useState, useEffect } from 'react';
 import CreateModal from './components/CreateModal';
 import EditModal from './components/EditModal';
 import { EditOutlined, DeleteOutlined, } from '@ant-design/icons'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [openCreate, setOpenCreate] = useState(false)
@@ -157,12 +159,16 @@ function App() {
     const finalCreatedDate = createdDate.getTime();
     // console.log("submit data =", data)
     if (data.title === "" || data.description === "" || data.status === "") {
-      window.alert("please fill all the details")
+      toast.warning("Please fill all the input details", {
+        position: "top-center"
+      })
       return;
     }
 
     if (finalDueDate < finalCreatedDate) {
-      window.alert("Invalid due date")
+      toast.error("Invalid due date", {
+        position: "top-center"
+      })
       return;
     }
 
@@ -176,6 +182,9 @@ function App() {
       }
     ])
     setOpenCreate(false)
+    toast.success("Todo created successfully", {
+      position: "top-center"
+    })
     resetData()
   }
 
@@ -183,13 +192,15 @@ function App() {
     const finalDueDate = new Date(data.dueDate).getTime()
     const finalCreatedDate = new Date(data.created).getTime();
     if (data.title === "" || data.description === "" || data.status === "") {
-      window.alert("please fill all the details")
-      return;
+      toast.warning("Please fill all the input details", {
+        position: "top-center"
+      })
     }
 
     if (finalDueDate < finalCreatedDate) {
-      window.alert("Invalid due date")
-      return;
+      toast.error("Invalid due date", {
+        position: "top-center"
+      })
     }
     setTodoList(prevTodoList => {
       return prevTodoList.map(todo => {
@@ -201,6 +212,9 @@ function App() {
       })
     })
     setOpenEdit(false)
+    toast.success("Todo updated successfully", {
+      position: "top-center"
+    })
     // console.log("data", data)
   }
   const onEditItem = (record) => {
@@ -269,6 +283,7 @@ function App() {
         <CreateModal onChange={change} data={data} openCreate={openCreate} setOpenCreate={setOpenCreate} submit={(data) => onSubmitCreate(data)} changeStatus={statusHandler} changeTag={handleTagChange} />
         <EditModal onChange={change} data={data} openEdit={openEdit} setOpenEdit={setOpenEdit} submit={(data) => onSubmitEdit(data)} changeStatus={statusHandler} changeTag={handleTagChange} />
       </header>
+      <ToastContainer />
 
     </div>
   );
